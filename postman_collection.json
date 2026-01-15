@@ -1,0 +1,671 @@
+{
+    "info": {
+        "name": "TT Rush Pro Backend API",
+        "description": "Complete API collection for TT Rush Pro table tennis application",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{accessToken}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000/api",
+            "type": "string"
+        },
+        {
+            "key": "accessToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "refreshToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "userId",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "challengeId",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "matchId",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "notificationId",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Google Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                                    "    pm.collectionVariables.set('refreshToken', response.data.refreshToken);",
+                                    "    pm.collectionVariables.set('userId', response.data.user._id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"token\": \"YOUR_GOOGLE_ID_TOKEN_HERE\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/google",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "google"
+                            ]
+                        },
+                        "description": "Login with Google OAuth token"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Refresh Token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('accessToken', response.data.accessToken);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/refresh",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "refresh"
+                            ]
+                        },
+                        "description": "Refresh access token using refresh token"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/logout",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "logout"
+                            ]
+                        },
+                        "description": "Logout current user"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "item": [
+                {
+                    "name": "Get Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/users/profile",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users",
+                                "profile"
+                            ]
+                        },
+                        "description": "Get current user profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Updated Name\",\n  \"profilePicture\": \"https://example.com/profile.jpg\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/users/profile",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users",
+                                "profile"
+                            ]
+                        },
+                        "description": "Update user profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update FCM Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"fcmToken\": \"YOUR_FCM_TOKEN_HERE\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/users/fcm-token",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "users",
+                                "fcm-token"
+                            ]
+                        },
+                        "description": "Update Firebase Cloud Messaging token"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Challenges",
+            "item": [
+                {
+                    "name": "Get All Challenges",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/challenges",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "challenges"
+                            ],
+                            "query": [
+                                {
+                                    "key": "type",
+                                    "value": "rank",
+                                    "disabled": true,
+                                    "description": "Filter by type: rank or weekly"
+                                }
+                            ]
+                        },
+                        "description": "Get all active challenges"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Challenge by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/challenges/{{challengeId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "challenges",
+                                "{{challengeId}}"
+                            ]
+                        },
+                        "description": "Get specific challenge by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Challenge",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('challengeId', response.data._id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Beginner Challenge\",\n  \"type\": \"rank\",\n  \"minRank\": 0,\n  \"maxRank\": 100,\n  \"startDate\": \"2026-01-15T00:00:00.000Z\",\n  \"endDate\": \"2026-01-22T23:59:59.999Z\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/challenges",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "challenges"
+                            ]
+                        },
+                        "description": "Create a new challenge (rank-based)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Weekly Challenge",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Week 3 Challenge\",\n  \"type\": \"weekly\",\n  \"weekNumber\": 3,\n  \"year\": 2026,\n  \"startDate\": \"2026-01-13T00:00:00.000Z\",\n  \"endDate\": \"2026-01-18T23:59:59.999Z\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/challenges",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "challenges"
+                            ]
+                        },
+                        "description": "Create a new weekly challenge"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Matches",
+            "item": [
+                {
+                    "name": "Create Match",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('matchId', response.data._id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"player1\": \"{{userId}}\",\n  \"player2\": \"PLAYER_2_ID_HERE\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/matches",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "matches"
+                            ]
+                        },
+                        "description": "Create a new match"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Matches",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/matches",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "matches"
+                            ],
+                            "query": [
+                                {
+                                    "key": "challengeId",
+                                    "value": "{{challengeId}}",
+                                    "disabled": true,
+                                    "description": "Filter by challenge ID"
+                                },
+                                {
+                                    "key": "userId",
+                                    "value": "{{userId}}",
+                                    "disabled": true,
+                                    "description": "Filter by user ID"
+                                }
+                            ]
+                        },
+                        "description": "Get all matches with optional filters"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Match Result",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"score\": {\n    \"player1Score\": 11,\n    \"player2Score\": 7\n  },\n  \"winner\": \"{{userId}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/matches/{{matchId}}/result",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "matches",
+                                "{{matchId}}",
+                                "result"
+                            ]
+                        },
+                        "description": "Update match result with scores and winner"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Leaderboard",
+            "item": [
+                {
+                    "name": "Get Overall Leaderboard",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/leaderboard?limit=100",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "leaderboard"
+                            ],
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "100",
+                                    "description": "Number of players to return"
+                                }
+                            ]
+                        },
+                        "description": "Get overall leaderboard based on ranking"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Weekly Leaderboard",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/leaderboard/weekly",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "leaderboard",
+                                "weekly"
+                            ]
+                        },
+                        "description": "Get weekly leaderboard based on weekly wins"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Notifications",
+            "item": [
+                {
+                    "name": "Get Notifications",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/notifications",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "notifications"
+                            ]
+                        },
+                        "description": "Get all notifications for current user"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Mark as Read",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/notifications/{{notificationId}}/read",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "{{notificationId}}",
+                                "read"
+                            ]
+                        },
+                        "description": "Mark notification as read"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Send Notification",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": \"USER_ID_HERE\",\n  \"title\": \"Match Invitation\",\n  \"body\": \"You have been invited to a match!\",\n  \"type\": \"match_invite\",\n  \"data\": {\n    \"matchId\": \"{{matchId}}\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/notifications/send",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "send"
+                            ]
+                        },
+                        "description": "Send a notification to a user"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Home",
+            "item": [
+                {
+                    "name": "Get Home Data",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/home",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "home"
+                            ]
+                        },
+                        "description": "Get dashboard data including user profile, recent matches, active challenges, and top players"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Stats",
+            "item": [
+                {
+                    "name": "Get User Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/stats",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "stats"
+                            ]
+                        },
+                        "description": "Get current user statistics including wins, losses, win percentage, and ranking"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Health Check",
+            "item": [
+                {
+                    "name": "Server Health",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "http://localhost:3000/health",
+                            "protocol": "http",
+                            "host": [
+                                "localhost"
+                            ],
+                            "port": "3000",
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Check if server is running"
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}
