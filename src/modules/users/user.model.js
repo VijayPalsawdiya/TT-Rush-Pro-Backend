@@ -22,6 +22,22 @@ const userSchema = new mongoose.Schema(
         profilePicture: {
             type: String,
         },
+        gender: {
+            type: String,
+            enum: ['male', 'female'],
+        },
+        phoneNumber: {
+            type: String,
+            trim: true,
+        },
+        gameType: {
+            type: String,
+            enum: ['right-hand', 'left-hand'],
+        },
+        isProfileComplete: {
+            type: Boolean,
+            default: false,
+        },
         fcmToken: {
             type: String,
         },

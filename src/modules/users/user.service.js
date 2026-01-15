@@ -9,6 +9,11 @@ exports.getUserById = async (userId) => {
 };
 
 exports.updateUser = async (userId, updateData) => {
+    // Check if profile is being completed
+    if (updateData.gender && updateData.phoneNumber && updateData.gameType) {
+        updateData.isProfileComplete = true;
+    }
+
     const user = await User.findByIdAndUpdate(
         userId,
         { $set: updateData },
