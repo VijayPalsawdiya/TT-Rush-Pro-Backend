@@ -1,6 +1,15 @@
 const userService = require('./user.service');
 const { sendSuccess, sendError } = require('../../utils/response.util');
 
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await userService.getAllUsers();
+        sendSuccess(res, users, 'Users fetched successfully');
+    } catch (error) {
+        sendError(res, error);
+    }
+};
+
 exports.getProfile = async (req, res) => {
     try {
         const user = await userService.getUserById(req.user.id);

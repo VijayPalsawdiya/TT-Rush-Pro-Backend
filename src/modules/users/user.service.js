@@ -1,5 +1,11 @@
 const User = require('./user.model');
 
+exports.getAllUsers = async () => {
+    return await User.find()
+        .select('name profilePicture ranking totalWins totalLosses winPercentage gender gameType')
+        .sort({ ranking: -1 });
+};
+
 exports.getUserById = async (userId) => {
     const user = await User.findById(userId).select('-refreshToken');
     if (!user) {

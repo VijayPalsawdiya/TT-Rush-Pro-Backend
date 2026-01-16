@@ -6,6 +6,7 @@ const userValidation = require('./user.validation');
 
 const router = express.Router();
 
+router.get('/', authMiddleware, userController.getAllUsers);
 router.get('/profile', authMiddleware, userController.getProfile);
 router.put('/profile', authMiddleware, validate(userValidation.updateProfile), userController.updateProfile);
 router.post('/fcm-token', authMiddleware, validate(userValidation.updateFCMToken), userController.updateFCMToken);
