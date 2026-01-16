@@ -4,8 +4,7 @@ const matchSchema = new mongoose.Schema(
     {
         challengeId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Challenge',
-            required: true,
+            ref: 'MatchChallenge',
         },
         player1: {
             type: mongoose.Schema.Types.ObjectId,

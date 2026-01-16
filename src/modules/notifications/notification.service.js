@@ -9,9 +9,53 @@ exports.getNotifications = async (userId) => {
 };
 
 exports.markAsRead = async (notificationId) => {
-    await Notification.findByIdAndUpdate(notificationId, { isRead: true });
+    await Notification.findByIdAndUpdate(notificationId, { read: true });
 };
 
+/**
+ * Create a notification (for match challenges)
+ */
+exports.createNotification = async (notificationData) => {
+    const { userId, type, title, message, relatedId } = notificationData;
+
+    // Save notification to database
+    const notification = await Notification.create({
+        userId,
+        title,
+        message,
+        type,
+        relatedId,
+    });
+
+    // Send FCM notification
+    const user = await User.findById(userId);
+
+    if (user && user.fcmToken) {
+        const fcmMessage = {
+            notification: {
+                title,
+                body: message,
+            },
+            data: {
+                type,
+                relatedId: relatedId?.toString() || '',
+            },
+            token: user.fcmToken,
+        };
+
+        try {
+            await admin.messaging().send(fcmMessage);
+        } catch (error) {
+            console.error('FCM send error:', error);
+        }
+    }
+
+    return notification;
+};
+
+/**
+ * Send notification (legacy method)
+ */
 exports.sendNotification = async (notificationData) => {
     const { userId, title, body, type, data } = notificationData;
 
@@ -19,7 +63,7 @@ exports.sendNotification = async (notificationData) => {
     await Notification.create({
         userId,
         title,
-        body,
+        message: body,
         type,
         data,
     });

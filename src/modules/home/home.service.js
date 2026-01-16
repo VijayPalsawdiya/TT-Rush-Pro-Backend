@@ -1,6 +1,5 @@
-const User = require('../users/user.model');
 const Match = require('../matches/match.model');
-const Challenge = require('../challenges/challenge.model');
+const User = require('../users/user.model');
 
 /**
  * Get home screen data for a user
@@ -11,6 +10,8 @@ exports.getHomeData = async (userId) => {
     // Get user data
     const user = await User.findById(userId).select('-refreshToken');
 
+    console.log('🔍 Fetching upcoming matches for user:', userId);
+
     // Get upcoming matches (pending status)
     const upcomingMatches = await Match.find({
         $or: [{ player1: userId }, { player2: userId }],
@@ -20,6 +21,17 @@ exports.getHomeData = async (userId) => {
         .populate('player2', 'name profilePicture')
         .sort({ matchDate: 1 })
         .limit(5);
+
+    console.log('📊 Found upcoming matches:', upcomingMatches.length);
+    if (upcomingMatches.length > 0) {
+        console.log('Matches:', upcomingMatches.map(m => ({
+            id: m._id,
+            player1: m.player1?.name,
+            player2: m.player2?.name,
+            status: m.status,
+            date: m.matchDate
+        })));
+    }
 
     // Get recent completed matches
     const recentMatches = await Match.find({
@@ -32,7 +44,8 @@ exports.getHomeData = async (userId) => {
         .sort({ createdAt: -1 })
         .limit(5);
 
-    // Get active challenges
+    // Get active challenges (tournament challenges, not match challenges)
+    const Challenge = require('../challenges/challenge.model');
     const activeChallenges = await Challenge.find({ isActive: true })
         .sort({ createdAt: -1 })
         .limit(3);
