@@ -10,6 +10,7 @@ router.post('/', authMiddleware, validate(matchChallengeValidation.sendChallenge
 router.get('/', authMiddleware, matchChallengeController.getUserChallenges);
 router.put('/:id/accept', authMiddleware, matchChallengeController.acceptChallenge);
 router.put('/:id/reject', authMiddleware, matchChallengeController.rejectChallenge);
+router.post('/status/batch', authMiddleware, matchChallengeController.getBatchChallengeStatus);
 router.get('/status/:userId', authMiddleware, matchChallengeController.getChallengeStatus);
 
 module.exports = router;

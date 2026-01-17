@@ -27,6 +27,14 @@ exports.createNotification = async (notificationData) => {
         relatedId,
     });
 
+    // Emit socket event for real-time update
+    try {
+        const { emitToUser } = require('../../socket');
+        emitToUser(userId, 'notification:new', notification);
+    } catch (error) {
+        console.warn('Socket emit failed:', error.message);
+    }
+
     // Send FCM notification
     const user = await User.findById(userId);
 

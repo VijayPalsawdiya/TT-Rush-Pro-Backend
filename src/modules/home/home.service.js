@@ -12,13 +12,26 @@ exports.getHomeData = async (userId) => {
 
     console.log('🔍 Fetching upcoming matches for user:', userId);
 
-    // Get upcoming matches (pending status)
+    // Get upcoming matches (pending status) - includes both singles and doubles
     const upcomingMatches = await Match.find({
-        $or: [{ player1: userId }, { player2: userId }],
+        $or: [
+            // Singles matches
+            { player1: userId },
+            { player2: userId },
+            // Doubles matches
+            { team1Player1: userId },
+            { team1Player2: userId },
+            { team2Player1: userId },
+            { team2Player2: userId },
+        ],
         status: 'pending',
     })
         .populate('player1', 'name profilePicture')
         .populate('player2', 'name profilePicture')
+        .populate('team1Player1', 'name profilePicture')
+        .populate('team1Player2', 'name profilePicture')
+        .populate('team2Player1', 'name profilePicture')
+        .populate('team2Player2', 'name profilePicture')
         .sort({ matchDate: 1 })
         .limit(5);
 
@@ -26,20 +39,36 @@ exports.getHomeData = async (userId) => {
     if (upcomingMatches.length > 0) {
         console.log('Matches:', upcomingMatches.map(m => ({
             id: m._id,
+            isSingles: m.isSingles,
             player1: m.player1?.name,
             player2: m.player2?.name,
+            team1: m.isSingles ? null : `${m.team1Player1?.name} & ${m.team1Player2?.name}`,
+            team2: m.isSingles ? null : `${m.team2Player1?.name} & ${m.team2Player2?.name}`,
             status: m.status,
             date: m.matchDate
         })));
     }
 
-    // Get recent completed matches
+    // Get recent completed matches - includes both singles and doubles
     const recentMatches = await Match.find({
-        $or: [{ player1: userId }, { player2: userId }],
+        $or: [
+            // Singles matches
+            { player1: userId },
+            { player2: userId },
+            // Doubles matches
+            { team1Player1: userId },
+            { team1Player2: userId },
+            { team2Player1: userId },
+            { team2Player2: userId },
+        ],
         status: 'completed',
     })
         .populate('player1', 'name profilePicture')
         .populate('player2', 'name profilePicture')
+        .populate('team1Player1', 'name profilePicture')
+        .populate('team1Player2', 'name profilePicture')
+        .populate('team2Player1', 'name profilePicture')
+        .populate('team2Player2', 'name profilePicture')
         .populate('winner', 'name')
         .sort({ createdAt: -1 })
         .limit(5);
